@@ -1,90 +1,123 @@
-# TekUpProject
+# IA Workflow Angular
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.9.
+IA Workflow Angular is a single-page Angular application for managing AI workflows, agents, and execution runs. It behaves like a lightweight workflow studio: users authenticate, inspect KPIs, design workflows, launch executions, and follow live progress in real time.
 
-## Development server
+## What this app does
 
-To start a local development server, run:
+- Secure login with JWT-based authentication stored in browser `localStorage`.
+- Dashboard with KPI cards for total runs, success rate, duration metrics, top agents, and error breakdowns.
+- Workflow studio for listing, filtering, creating, editing, validating, and deleting workflows.
+- Workflow builder view that renders the workflow graph and its node connections.
+- Workflow playground that launches a run and streams execution updates through server-sent events.
+- Agents page for browsing active agents and their metadata.
+- Runs page with execution history, step-by-step details, logs, inputs, outputs, and status breakdowns.
+- Settings page for application configuration.
 
-```bash
-ng serve
-```
+## Tech Stack
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- Angular 21 with standalone components
+- Angular Router with guarded routes
+- Signals, computed state, and effects
+- RxJS for HTTP and data loading flows
+- TypeScript
+- SCSS
+- Vitest for unit testing
 
-## Code scaffolding
+## Project Structure
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- `src/app/app.ts` - root shell, navigation, and authenticated app bootstrap
+- `src/app/app.routes.ts` - route definitions and lazy-loaded pages
+- `src/app/services/` - API, auth, workflow, run, KPI, and data coordination services
+- `src/app/models/` - domain models for users, agents, workflows, runs, KPI data, and pagination
+- `src/app/pages/` - feature pages for dashboard, workflows, agents, runs, login, settings, and workflow views
+- `src/app/components/` - shared UI building blocks
 
-```bash
-ng generate component component-name
-```
+## Backend Contract
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+The frontend expects a backend API mounted under `/api` with endpoints such as:
 
-```bash
-ng generate --help
-```
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+- `GET /api/auth/me`
+- `GET /api/agents`
+- `GET /api/workflows`
+- `POST /api/workflows`
+- `POST /api/workflows/:id/validate`
+- `GET /api/runs`
+- `POST /api/runs`
+- `GET /api/kpis`
+- `GET /api/runs/:id/stream?token=...` for live execution updates
 
-## Building
+## Local Development
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-
-## Docker / Production
-
-This repository includes a multi-stage `Dockerfile` to build the Angular app and serve it with `nginx`, plus a `docker-compose.yml` for local containerized runs.
-
-- Build a production image:
+Install dependencies:
 
 ```bash
-docker build -t tek-up-frontend:latest .
+npm install
 ```
 
-- Run the image locally:
+Run the development server:
 
 ```bash
-docker run --rm -p 4200:80 tek-up-frontend:latest
+npm start
 ```
 
-- Using Docker Compose (build + run):
+The app is served at `http://localhost:4200/` and uses `proxy.conf.json` to forward `/api` requests during local development.
+
+Build for production:
+
+```bash
+npm run build
+```
+
+Run unit tests:
+
+```bash
+npm test
+```
+
+## Docker
+
+This repository includes a multi-stage `Dockerfile` and a `docker-compose.yml` for containerized runs.
+
+Build the image:
+
+```bash
+docker build -t ia-workflow-angular:latest .
+```
+
+Run the container:
+
+```bash
+docker run --rm -p 4200:80 ia-workflow-angular:latest
+```
+
+Start with Docker Compose:
 
 ```bash
 docker compose up --build -d
 ```
 
-Notes:
-- The dev server uses `proxy.conf.json` (see `package.json` `start` script) for `/api` forwarding. In production, point your backend API endpoint to the same domain or configure a reverse proxy.
-- If you need runtime-config (to change `API_BASE` without rebuilding), consider adding a runtime JSON file served from `/assets` and read by the app on startup.
+## Notes
 
-Files added:
-- [Dockerfile](Dockerfile)
-- [docker-compose.yml](docker-compose.yml)
-- [.dockerignore](.dockerignore)
+- The app is route-protected: most pages require authentication and redirect to login when no token is present.
+- Workflow and run data are loaded lazily and cached in `AppDataService` using Angular signals.
+- Live run execution relies on EventSource streaming from the backend.
+- If your backend is hosted separately in production, configure the frontend base URL or reverse proxy so `/api` resolves correctly.
+
+## Useful Commands
+
+```bash
+npm start
+npm run build
+npm test
+docker compose up --build -d
+```
+
+## Angular CLI
+
+For more Angular CLI commands and generators, use:
+
+```bash
+npx ng --help
+```
