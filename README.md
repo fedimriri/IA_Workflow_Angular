@@ -2,6 +2,12 @@
 
 IA Workflow Angular is a single-page Angular application for managing AI workflows, agents, and execution runs. It behaves like a lightweight workflow studio: users authenticate, inspect KPIs, design workflows, launch executions, and follow live progress in real time.
 
+## Ownership
+
+- Owner: fedimriri
+- Copyright: © 2026 fedimriri
+- License: MIT
+
 ## What this app does
 
 - Secure login with JWT-based authentication stored in browser `localStorage`.
@@ -121,3 +127,7 @@ For more Angular CLI commands and generators, use:
 ```bash
 npx ng --help
 ```
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for the full text.
